@@ -1,101 +1,77 @@
-#include<bits/stdc++.h>
+#include <bits/stdc++.h>
 using namespace std;
 
-int main()
-{
-    cout << "Length of data set :";
+int main() {
+    cout << "Length of data set: ";
     int data;
     cin >> data;
-    cout << endl << "Enter all data : ";
-    vector<double>v;
-    for(int i = 0; i < data;i++)
-    {
-        int x;
-        cin >> x;
-        v.push_back(x);
-    }
-    int ei = 5;
-    int n = data/ei;
 
-    cout << "Length of class which range 5 to " << n << " :" ;
-    int number = data/ei;
-    cin >> number;
-
-    if(number > n || number < ei)
-    {
-        cout << "Invailid class number" << endl;
+    if (data <= 0) {
+        cout << "Invalid data length." << endl;
         return 0;
     }
 
-    double range = (double)(0+1)/(double)number;
-    cout << "Every class range " << number << endl;
-
-
-    vector<int>oi;
-    cout << number << " oi value assign : ";
-    for(int i = 0;i < number;i++)
-    {
-        int x;
-        x = v[i]/range;
-        oi[x]++;
+    vector<double> v(data);
+    cout << "Enter all data: ";
+    for (int i = 0; i < data; i++) {
+        cin >> v[i];
     }
-    cout << "List of oi------> ";
-     for(int i = 0;i < number;i++)
-    {
-        cout << oi[i] << " ";
+
+    sort(v.begin(), v.end());
+    double minVal = v.front();
+    double maxVal = v.back();
+
+    cout << "Enter the number of classes: ";
+    int number;
+    cin >> number;
+
+    if (number <= 0 || number > data) {
+        cout << "Invalid number of classes." << endl;
+        return 0;
+    }
+
+    double range = (maxVal - minVal) / number;
+    cout << "Each class range: " << range << endl;
+
+    vector<int> oi(number, 0);
+    for (double value : v) {
+        int bin = min(int((value - minVal) / range), number - 1); 
+        oi[bin]++;
+    }
+
+    double ei = (double)data / number;
+
+    cout << "List of observed frequencies (oi): ";
+    for (int freq : oi) {
+        cout << freq << " ";
     }
     cout << endl;
 
-
-    cout << "List of ei------> ";
-     for(int i = 0;i < number;i++)
-    {
+    cout << "List of expected frequencies (ei): ";
+    for (int i = 0; i < number; i++) {
         cout << ei << " ";
     }
     cout << endl;
 
-    vector<int>sub;
-    for(int i =0 ; i < number;i++)
-    {
-        int x = oi[i] - ei;
-        sub.push_back(x);
-    }
-    cout << "List of oi - ei------> ";
-     for(int i = 0;i < number;i++)
-    {
-        cout << sub[i] << " ";
-    }
-    cout << endl;
 
-    vector<double>res;
-    for(int i =0 ; i < number;i++)
-    {
-        double x = (double)(pow(( (double)sub[i]) , 2))/(double)ei;
-        res.push_back(x);
-    }
-    cout << "List of oi - ei------> ";
     double D = 0.0;
-     for(int i = 0;i < number;i++)
-    {
-        cout << res[i] << " ";
-        D += res[i];
-    }
-    cout << endl;
-
-
-    cout << "The result of D = " << D << endl;
-
-    int a = 0.409;
-
-    if(D > a)
-    {
-        cout << "Rejcted the null hypothesis" << endl;
-    }
-    else
-    {
-        cout << "Not rejected the null hypothesis" << endl;
+    for (int i = 0; i < number; i++) {
+        double diff = oi[i] - ei;
+        D += (diff * diff) / ei;
     }
 
+    cout << "Chi-square statistic (D): " << D << endl;
+
+    double criticalValue;
+    cout << "Enter critical value: ";
+    cin >> criticalValue;
+
+
+    if (D > criticalValue) {
+        cout << "Rejected the null hypothesis." << endl;
+    } else {
+        cout << "Failed to reject the null hypothesis." << endl;
+    }
 
     return 0;
 }
